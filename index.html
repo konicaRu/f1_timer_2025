@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обратный отсчет до 16 августа 2025 года</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Обратный отсчет</h1>
+        <div class="countdown">
+            <p id="time"></p>
+        </div>
+        <canvas id="timeChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        const targetDate = new Date('2025-08-16T00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const remainingTime = targetDate - now;
+
+            if (remainingTime <= 0) {
+                document.getElementById('time').innerHTML = "Время истекло!";
+                return;
+            }
+
+            const seconds = Math.floor((remainingTime / 1000) % 60);
+            const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+            const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+            const months = Math.floor(days / 30);
+
+            const timeString = `${months} мес ${days % 30} д ${hours} ч ${minutes} мин ${seconds} сек`;
+
+            document.getElementById('time').innerHTML = timeString;
+
+            // Обновление графика
+            updateChart(months, days % 30, hours, minutes, seconds);
+        }
+
+        // График времени
+        let chart;
+
+        function updateChart(months, days, hours, minutes, seconds) {
+            if (!chart) {
+                chart = new Chart(document.getElementById('timeChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Месяцы', 'Дни', 'Часы', 'Минуты', 'Секунды'],
+                        datasets: [{
+                            label: 'Оставшееся время',
+                            data: [months, days, hours, minutes, seconds],
+                            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 60
+                            }
+                        }
+                    }
+                });
+            } else {
+                chart.data.datasets[0].data = [months, days, hours, minutes, seconds];
+                chart.update();
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
