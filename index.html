@@ -6,6 +6,7 @@
     <title>Время до первой гонки сезона 2025</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
     <div class="container">
@@ -14,7 +15,7 @@
         <div class="countdown">
             <p id="time"></p>
         </div>
-        <canvas id="timeChart" width="600" height="400"></canvas>
+        <canvas id="timeChart"></canvas>
     </div>
 
     <script>
@@ -43,7 +44,6 @@
             updateChart(months, days % 30, hours, minutes, seconds);
         }
 
-        // График времени
         let chart;
 
         function updateChart(months, days, hours, minutes, seconds) {
@@ -67,6 +67,7 @@
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: {
                                 display: false
@@ -79,8 +80,10 @@
                                 align: 'top',
                                 color: '#000',
                                 font: {
-                                    weight: 'bold'
-                                }
+                                    weight: 'bold',
+                                    size: 16
+                                },
+                                formatter: (value) => value
                             }
                         },
                         scales: {
@@ -88,19 +91,20 @@
                                 beginAtZero: true,
                                 ticks: {
                                     font: {
-                                        size: 16
+                                        size: 14
                                     }
                                 }
                             },
                             x: {
                                 ticks: {
                                     font: {
-                                        size: 16
+                                        size: 14
                                     }
                                 }
                             }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels]
                 });
             } else {
                 chart.data.datasets[0].data = [months, days, hours, minutes, seconds];
