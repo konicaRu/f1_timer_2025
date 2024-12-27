@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обратный отсчет до 16 августа 2025 года</title>
+    <title>Время до первой гонки сезона 2025</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Обратный отсчет</h1>
+        <h1>Время до первой гонки сезона 2025</h1>
+        <h2>Time until the first race of the 2025 season</h2>
         <div class="countdown">
             <p id="time"></p>
         </div>
-        <canvas id="timeChart" width="400" height="200"></canvas>
+        <canvas id="timeChart" width="600" height="400"></canvas>
     </div>
 
     <script>
-        const targetDate = new Date('2025-08-16T00:00:00').getTime();
+        const targetDate = new Date('2025-03-16T00:00:00').getTime();
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -54,16 +55,49 @@
                         datasets: [{
                             label: 'Оставшееся время',
                             data: [months, days, hours, minutes, seconds],
-                            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                            backgroundColor: [
+                                '#d32f2f', // Красный (Формула 1)
+                                '#ff9800', // Оранжевый
+                                '#fbc02d', // Желтый
+                                '#1976d2', // Синий
+                                '#388e3c'  // Зеленый
+                            ],
                             borderWidth: 1
                         }]
                     },
                     options: {
                         responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: true
+                            },
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'top',
+                                color: '#000',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                max: 60
+                                ticks: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
                             }
                         }
                     }
