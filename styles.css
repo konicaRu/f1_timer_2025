@@ -12,11 +12,15 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    /* Удаляем фоновые изображения */
 }
 
 .container {
     text-align: center;
     padding: 20px;
+    background: rgba(26, 26, 26, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
 h1 {
@@ -51,7 +55,7 @@ h2 {
 
 .gauge-label {
     position: absolute;
-    top: 120px;
+    top: 130px;
     width: 100%;
     text-align: center;
     font-size: 1em;
@@ -59,7 +63,7 @@ h2 {
 }
 
 .gauge-label br {
-    display: none;
+    display: none; /* Скрываем перенос строки для лучшего отображения */
 }
 
 @media (max-width: 768px) {
@@ -69,7 +73,7 @@ h2 {
     }
 
     .gauge-label {
-        top: 90px;
+        top: 100px;
         font-size: 0.9em;
     }
 
@@ -93,7 +97,7 @@ h2 {
     }
 
     .gauge-label {
-        top: 75px;
+        top: 80px;
         font-size: 0.8em;
     }
 
