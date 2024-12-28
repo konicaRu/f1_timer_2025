@@ -45,7 +45,7 @@ h2 {
 .gauge-container {
     position: relative;
     width: 200px;
-    height: 160px;
+    height: 220px; /* Увеличено для размещения меток и значений */
 }
 
 .gauge-container canvas {
@@ -55,10 +55,19 @@ h2 {
 
 .gauge-label {
     position: absolute;
-    top: 130px;
+    top: 170px;
     width: 100%;
     text-align: center;
     font-size: 1em;
+    color: #f0f0f0;
+}
+
+.gauge-value {
+    position: absolute;
+    top: 190px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
     color: #f0f0f0;
 }
 
@@ -69,12 +78,17 @@ h2 {
 @media (max-width: 768px) {
     .gauge-container {
         width: 150px;
-        height: 120px;
+        height: 180px;
     }
 
     .gauge-label {
-        top: 100px;
+        top: 130px;
         font-size: 0.9em;
+    }
+
+    .gauge-value {
+        top: 150px;
+        font-size: 1em;
     }
 
     h1 {
@@ -93,11 +107,16 @@ h2 {
 
     .gauge-container {
         width: 120px;
-        height: 100px;
+        height: 160px;
     }
 
     .gauge-label {
-        top: 80px;
+        top: 100px;
+        font-size: 0.8em;
+    }
+
+    .gauge-value {
+        top: 120px;
         font-size: 0.8em;
     }
 
