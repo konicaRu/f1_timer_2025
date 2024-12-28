@@ -3,32 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обратный отсчет до 16 марта 2025</title>
+    <title>Время до первой гонки сезона 2025 | Countdown to the First Race of the 2025 Season</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Подключение Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Подключение плагина для текста в центре -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-doughnutlabel@1.0.3/dist/chartjs-plugin-doughnutlabel.min.js"></script>
+    <!-- Подключение Gauge.js через CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Обратный отсчет до 16 марта 2025</h1>
+        <h1>Время до первой гонки сезона 2025</h1>
+        <h2>Countdown to the First Race of the 2025 Season</h2>
         <div class="gauges">
-            <div class="gauge">
+            <div class="gauge-container">
                 <canvas id="monthsGauge"></canvas>
-                <span class="label">Месяцев</span>
+                <div class="gauge-label">Месяцев<br>Months</div>
             </div>
-            <div class="gauge">
+            <div class="gauge-container">
+                <canvas id="daysGauge"></canvas>
+                <div class="gauge-label">Дней<br>Days</div>
+            </div>
+            <div class="gauge-container">
                 <canvas id="hoursGauge"></canvas>
-                <span class="label">Часов</span>
+                <div class="gauge-label">Часов<br>Hours</div>
             </div>
-            <div class="gauge">
+            <div class="gauge-container">
                 <canvas id="minutesGauge"></canvas>
-                <span class="label">Минут</span>
+                <div class="gauge-label">Минут<br>Minutes</div>
             </div>
-            <div class="gauge">
+            <div class="gauge-container">
                 <canvas id="secondsGauge"></canvas>
-                <span class="label">Секунд</span>
+                <div class="gauge-label">Секунд<br>Seconds</div>
             </div>
         </div>
     </div>
