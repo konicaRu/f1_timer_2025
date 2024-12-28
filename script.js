@@ -59,8 +59,9 @@ function generateStaticLabels(max) {
 
 // Создание спидометров
 const gauges = {
-    months: createGaugeElement('monthsGauge', 60),    // Максимум 60 месяцев
-    hours: createGaugeElement('hoursGauge', 24),      // Максимум 24 часов
+    months: createGaugeElement('monthsGauge', 12),    // Максимум 12 месяцев
+    days: createGaugeElement('daysGauge', 31),        // Максимум 31 день
+    hours: createGaugeElement('hoursGauge', 24),      // Максимум 24 часа
     minutes: createGaugeElement('minutesGauge', 60),  // Максимум 60 минут
     seconds: createGaugeElement('secondsGauge', 60)   // Максимум 60 секунд
 };
@@ -73,6 +74,7 @@ function getTimeRemaining() {
     if (distance < 0) {
         return {
             months: 0,
+            days: 0,
             hours: 0,
             minutes: 0,
             seconds: 0
@@ -84,27 +86,37 @@ function getTimeRemaining() {
     const totalHours = Math.floor(totalMinutes / 60);
     const totalDays = Math.floor(totalHours / 24);
     const months = Math.floor(totalDays / 30); // Приближенно
+    const days = totalDays % 30;
     const hours = totalHours % 24;
     const minutes = totalMinutes % 60;
     const seconds = totalSeconds % 60;
 
     return {
         months,
+        days,
         hours,
         minutes,
         seconds
     };
 }
 
-// Обновление спидометров
+// Обновление спидометров и значений
 function updateGauges() {
     const time = getTimeRemaining();
 
     // Ограничиваем значения максимальным
-    gauges.months.set(Math.min(time.months, 60));
+    gauges.months.set(Math.min(time.months, 12));
+    gauges.days.set(Math.min(time.days, 31));
     gauges.hours.set(Math.min(time.hours, 24));
     gauges.minutes.set(Math.min(time.minutes, 60));
     gauges.seconds.set(Math.min(time.seconds, 60));
+
+    // Обновляем текстовые значения
+    document.getElementById('monthsValue').innerText = time.months;
+    document.getElementById('daysValue').innerText = time.days;
+    document.getElementById('hoursValue').innerText = time.hours;
+    document.getElementById('minutesValue').innerText = time.minutes;
+    document.getElementById('secondsValue').innerText = time.seconds;
 }
 
 // Инициализация и запуск таймера
