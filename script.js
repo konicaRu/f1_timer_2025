@@ -1,7 +1,68 @@
 // script.js
 
-// Целевая дата
+// Целевая дата: 16 марта 2025 года
 const targetDate = new Date('March 16, 2025 00:00:00').getTime();
+
+// Инициализация настроек для Gauge.js
+const gaugeOptions = {
+    angle: 0, // Начальный угол
+    lineWidth: 0.3, // Толщина линии
+    radiusScale: 1, // Масштаб радиуса
+    pointer: {
+        length: 0.6, // Длина стрелки
+        strokeWidth: 0.035, // Толщина стрелки
+        color: '#ff6f61' // Цвет стрелки
+    },
+    limitMax: false,     // Не ограничивать максимальное значение
+    limitMin: false,     // Не ограничивать минимальное значение
+    colorStart: '#ff6f61',   // Начальный цвет градиента
+    colorStop: '#ff6f61',    // Конечный цвет градиента
+    strokeColor: '#dddddd',  // Цвет границы
+    generateGradient: true,
+    highDpiSupport: true,     // Поддержка высоких DPI
+    staticLabels: {
+        font: "10px sans-serif",  // Шрифт меток
+        labels: [0, 10, 20, 30, 40, 50, 60],  // Метки (будут обновлены динамически)
+        color: "#ffffff",  // Цвет меток
+        fractionDigits: 0
+    },
+    staticZones: [
+        {strokeStyle: "#30B32D", min: 0, max: 60}, // Зеленый
+        {strokeStyle: "#FFDD00", min: 60, max: 80}, // Желтый
+        {strokeStyle: "#F03E3E", min: 80, max: 100}  // Красный
+    ]
+};
+
+// Функция для создания спидометра
+function createGaugeElement(elementId, maxValue) {
+    const opts = Object.assign({}, gaugeOptions);
+    opts.maxValue = maxValue;
+    opts.staticLabels.labels = generateStaticLabels(maxValue);
+    const target = document.getElementById(elementId);
+    return new Gauge(target).setOptions(opts);
+}
+
+// Функция для генерации меток в зависимости от максимального значения
+function generateStaticLabels(max) {
+    const step = Math.ceil(max / 5);
+    const labels = [];
+    for (let i = 0; i <= max; i += step) {
+        labels.push(i);
+    }
+    return labels;
+}
+
+// Создание спидометров
+const gauges = {
+    months: createGaugeElement('monthsGauge', 60), // Максимум 60 месяцев
+    days: createGaugeElement('daysGauge', 365), // Максимум 365 дней
+    hours: createGaugeElement('hoursGauge', 24), // Максимум 24 часов
+    minutes: createGaugeElement('minutesGauge', 60), // Максимум 60 минут
+    seconds: createGaugeElement('secondsGauge', 60)  // Максимум 60 секунд
+};
+
+// Установка начальных значений
+Object.values(gauges).forEach(gauge => gauge.set(0));
 
 // Функция для вычисления оставшегося времени
 function getTimeRemaining() {
@@ -11,6 +72,7 @@ function getTimeRemaining() {
     if (distance < 0) {
         return {
             months: 0,
+            days: 0,
             hours: 0,
             minutes: 0,
             seconds: 0
@@ -22,98 +84,31 @@ function getTimeRemaining() {
     const totalHours = Math.floor(totalMinutes / 60);
     const totalDays = Math.floor(totalHours / 24);
     const months = Math.floor(totalDays / 30); // Приближенно
+    const days = totalDays % 30;
     const hours = totalHours % 24;
     const minutes = totalMinutes % 60;
     const seconds = totalSeconds % 60;
 
     return {
         months,
+        days,
         hours,
         minutes,
         seconds
     };
 }
 
-// Инициализация графиков
-const gauges = {
-    months: null,
-    hours: null,
-    minutes: null,
-    seconds: null
-};
-
-// Функция для создания спидометра
-function createGauge(ctx, label, maxValue) {
-    return new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            datasets: [{
-                data: [0, maxValue],
-                backgroundColor: ['#e74c3c', '#34495e'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            rotation: -Math.PI,
-            circumference: Math.PI,
-            cutout: '70%',
-            plugins: {
-                doughnutlabel: {
-                    labels: [
-                        {
-                            text: '0',
-                            font: {
-                                size: '30',
-                                weight: 'bold'
-                            },
-                            color: '#ecf0f1'
-                        },
-                        {
-                            text: label,
-                            font: {
-                                size: '14'
-                            },
-                            color: '#ecf0f1'
-                        }
-                    ]
-                }
-            }
-        }
-    });
-}
-
-// Создание всех спидометров
-function initializeGauges() {
-    const monthsCtx = document.getElementById('monthsGauge').getContext('2d');
-    const hoursCtx = document.getElementById('hoursGauge').getContext('2d');
-    const minutesCtx = document.getElementById('minutesGauge').getContext('2d');
-    const secondsCtx = document.getElementById('secondsGauge').getContext('2d');
-
-    gauges.months = createGauge(monthsCtx, 'Месяцев', 60); // Максимум 60 месяцев
-    gauges.hours = createGauge(hoursCtx, 'Часов', 24);
-    gauges.minutes = createGauge(minutesCtx, 'Минут', 60);
-    gauges.seconds = createGauge(secondsCtx, 'Секунд', 60);
-}
-
-// Обновление графиков
+// Обновление спидометров
 function updateGauges() {
     const time = getTimeRemaining();
 
-    updateGauge(gauges.months, time.months, 60); // Максимум 60 месяцев
-    updateGauge(gauges.hours, time.hours, 24);
-    updateGauge(gauges.minutes, time.minutes, 60);
-    updateGauge(gauges.seconds, time.seconds, 60);
-}
-
-// Функция обновления отдельного графика
-function updateGauge(gauge, value, max) {
-    gauge.data.datasets[0].data[0] = value;
-    gauge.data.datasets[0].data[1] = max - value;
-    gauge.options.plugins.doughnutlabel.labels[0].text = value;
-    gauge.update();
+    gauges.months.set(time.months);
+    gauges.days.set(time.days);
+    gauges.hours.set(time.hours);
+    gauges.minutes.set(time.minutes);
+    gauges.seconds.set(time.seconds);
 }
 
 // Инициализация и запуск таймера
-initializeGauges();
 updateGauges();
 setInterval(updateGauges, 1000);
