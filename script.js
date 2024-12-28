@@ -1,130 +1,141 @@
-/* styles.css */
+// script.js
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
+// Целевая дата: 16 марта 2025 года
+const targetDate = new Date('March 16, 2025 00:00:00').getTime();
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-    font-family: 'Roboto Slab', serif;
-    color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    /* Удаляем фоновые изображения */
+// Инициализация настроек для Gauge.js
+const gaugeOptions = {
+    angle: 0, // Начальный угол (0 = 3 o'clock)
+    lineWidth: 0.3, // Толщина линии
+    radiusScale: 1, // Масштаб радиуса
+    pointer: {
+        length: 0.6, // Длина стрелки
+        strokeWidth: 0.035, // Толщина стрелки
+        color: '#ff6f61' // Цвет стрелки
+    },
+    limitMax: false,     // Не ограничивать максимальное значение
+    limitMin: false,     // Не ограничивать минимальное значение
+    colorStart: '#ff6f61',   // Начальный цвет градиента
+    colorStop: '#ff6f61',    // Конечный цвет градиента
+    strokeColor: '#dddddd',  // Цвет границы
+    generateGradient: true,
+    highDpiSupport: true,     // Поддержка высоких DPI
+    staticLabels: {
+        font: "12px sans-serif",  // Увеличен шрифт меток
+        labels: [0, 10, 20, 30, 40, 50, 60],  // Метки (будут обновлены динамически)
+        color: "#ffffff",  // Цвет меток
+        fractionDigits: 0
+    },
+    staticZones: [
+        {strokeStyle: "#30B32D", min: 0, max: 50}, // Зеленый
+        {strokeStyle: "#FFDD00", min: 50, max: 80}, // Желтый
+        {strokeStyle: "#F03E3E", min: 80, max: 100}  // Красный
+    ]
+};
+
+// Функция для создания спидометра с корректными настройками
+function createGaugeElement(elementId, maxValue) {
+    const opts = Object.assign({}, gaugeOptions);
+    opts.maxValue = maxValue;
+    // Обновляем метки на основе maxValue
+    opts.staticLabels.labels = generateStaticLabels(maxValue);
+    // Обновляем зоны цвета на основе maxValue
+    opts.staticZones = generateStaticZones(maxValue);
+
+    const target = document.getElementById(elementId);
+    const gauge = new Gauge(target).setOptions(opts);
+    gauge.maxValue = maxValue;
+    gauge.setMinValue(0);  // Минимальное значение
+    gauge.animationSpeed = 32; // Скорость анимации
+    gauge.set(0); // Установка начального значения
+    return gauge;
 }
 
-.container {
-    text-align: center;
-    padding: 20px;
-    background: rgba(26, 26, 26, 0.85);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+// Функция для генерации меток в зависимости от максимального значения
+function generateStaticLabels(max) {
+    const step = Math.ceil(max / 5);
+    const labels = [];
+    for (let i = 0; i <= max; i += step) {
+        labels.push(i);
+    }
+    return labels;
 }
 
-h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    color: #ff6f61;
+// Функция для генерации staticZones на основе maxValue
+function generateStaticZones(max) {
+    const zones = [];
+    if (max <= 0) return zones;
+    // Зеленый: 0 - 50% от max
+    zones.push({strokeStyle: "#30B32D", min: 0, max: max * 0.5});
+    // Желтый: 50% - 80% от max
+    zones.push({strokeStyle: "#FFDD00", min: max * 0.5, max: max * 0.8});
+    // Красный: 80% - max
+    zones.push({strokeStyle: "#F03E3E", min: max * 0.8, max: max});
+    return zones;
 }
 
-h2 {
-    font-size: 1.2em;
-    margin-bottom: 40px;
-    color: #ffffff;
-}
+// Создание спидометров с корректными максимальными значениями
+const gauges = {
+    months: createGaugeElement('monthsGauge', 12),    // Максимум 12 месяцев
+    days: createGaugeElement('daysGauge', 31),        // Максимум 31 день
+    hours: createGaugeElement('hoursGauge', 24),      // Максимум 24 часа
+    minutes: createGaugeElement('minutesGauge', 60),  // Максимум 60 минут
+    seconds: createGaugeElement('secondsGauge', 60)   // Максимум 60 секунд
+};
 
-.gauges {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-}
+// Функция для вычисления оставшегося времени
+function getTimeRemaining() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
 
-.gauge-container {
-    position: relative;
-    width: 200px;
-    height: 220px; /* Увеличено для размещения меток и значений */
-}
-
-.gauge-container canvas {
-    width: 100% !important;
-    height: auto !important;
-}
-
-.gauge-label {
-    position: absolute;
-    top: 170px;
-    width: 100%;
-    text-align: center;
-    font-size: 1em;
-    color: #f0f0f0;
-}
-
-.gauge-value {
-    position: absolute;
-    top: 190px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.2em;
-    color: #f0f0f0;
-}
-
-.gauge-label br {
-    display: none; /* Скрываем перенос строки для лучшего отображения */
-}
-
-@media (max-width: 768px) {
-    .gauge-container {
-        width: 150px;
-        height: 180px;
+    if (distance < 0) {
+        return {
+            months: 0,
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
+        };
     }
 
-    .gauge-label {
-        top: 130px;
-        font-size: 0.9em;
-    }
+    const totalSeconds = Math.floor(distance / 1000);
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const totalHours = Math.floor(totalMinutes / 60);
+    const totalDays = Math.floor(totalHours / 24);
+    const months = Math.floor(totalDays / 30); // Приближенно
+    const days = totalDays % 30;
+    const hours = totalHours % 24;
+    const minutes = totalMinutes % 60;
+    const seconds = totalSeconds % 60;
 
-    .gauge-value {
-        top: 150px;
-        font-size: 1em;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-
-    h2 {
-        font-size: 1.2em;
-    }
+    return {
+        months,
+        days,
+        hours,
+        minutes,
+        seconds
+    };
 }
 
-@media (max-width: 480px) {
-    .gauges {
-        gap: 20px;
-    }
+// Обновление спидометров и значений
+function updateGauges() {
+    const time = getTimeRemaining();
 
-    .gauge-container {
-        width: 120px;
-        height: 160px;
-    }
+    // Ограничиваем значения максимальным
+    gauges.months.set(Math.min(time.months, 12));
+    gauges.days.set(Math.min(time.days, 31));
+    gauges.hours.set(Math.min(time.hours, 24));
+    gauges.minutes.set(Math.min(time.minutes, 60));
+    gauges.seconds.set(Math.min(time.seconds, 60));
 
-    .gauge-label {
-        top: 100px;
-        font-size: 0.8em;
-    }
-
-    .gauge-value {
-        top: 120px;
-        font-size: 0.8em;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
-    h2 {
-        font-size: 1em;
-    }
+    // Обновляем текстовые значения
+    document.getElementById('monthsValue').innerText = time.months;
+    document.getElementById('daysValue').innerText = time.days;
+    document.getElementById('hoursValue').innerText = time.hours;
+    document.getElementById('minutesValue').innerText = time.minutes;
+    document.getElementById('secondsValue').innerText = time.seconds;
 }
+
+// Инициализация и запуск таймера
+updateGauges();
+setInterval(updateGauges, 1000);
