@@ -3,118 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Время до первой гонки сезона 2025</title>
+    <title>Обратный отсчет до 16 марта 2025</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Подключение Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <!-- Подключение плагина для текста в центре -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-doughnutlabel@1.0.3/dist/chartjs-plugin-doughnutlabel.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Время до первой гонки сезона 2025</h1>
-        <h2>Time until the first race of the 2025 season</h2>
-        <div class="countdown">
-            <p id="time"></p>
-        </div>
-        <div class="chart-container">
-            <canvas id="timeChart"></canvas>
+        <h1>Обратный отсчет до 16 марта 2025</h1>
+        <div class="gauges">
+            <div class="gauge">
+                <canvas id="monthsGauge"></canvas>
+                <span class="label">Месяцев</span>
+            </div>
+            <div class="gauge">
+                <canvas id="hoursGauge"></canvas>
+                <span class="label">Часов</span>
+            </div>
+            <div class="gauge">
+                <canvas id="minutesGauge"></canvas>
+                <span class="label">Минут</span>
+            </div>
+            <div class="gauge">
+                <canvas id="secondsGauge"></canvas>
+                <span class="label">Секунд</span>
+            </div>
         </div>
     </div>
 
-    <script>
-        const targetDate = new Date('2025-03-16T00:00:00').getTime();
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const remainingTime = targetDate - now;
-
-            if (remainingTime <= 0) {
-                document.getElementById('time').innerHTML = "Время истекло!";
-                return;
-            }
-
-            const seconds = Math.floor((remainingTime / 1000) % 60);
-            const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
-            const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
-            const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
-            const months = Math.floor(days / 30);
-
-            const timeString = `${months} мес ${days % 30} д ${hours} ч ${minutes} мин ${seconds} сек`;
-
-            document.getElementById('time').innerHTML = timeString;
-
-            // Обновление графика
-            updateChart(months, days % 30, hours, minutes, seconds);
-        }
-
-        let chart;
-
-        function updateChart(months, days, hours, minutes, seconds) {
-            if (!chart) {
-                chart = new Chart(document.getElementById('timeChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['Месяцы', 'Дни', 'Часы', 'Минуты', 'Секунды'],
-                        datasets: [{
-                            label: 'Оставшееся время',
-                            data: [months, days, hours, minutes, seconds],
-                            backgroundColor: [
-                                '#d32f2f', // Красный
-                                '#ff9800', // Оранжевый
-                                '#fbc02d', // Желтый
-                                '#1976d2', // Синий
-                                '#388e3c'  // Зеленый
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                enabled: true
-                            },
-                            datalabels: {
-                                anchor: 'end',
-                                align: 'top',
-                                color: '#000',
-                                font: {
-                                    weight: 'bold',
-                                    size: 14
-                                },
-                                formatter: (value) => value
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    plugins: [ChartDataLabels]
-                });
-            } else {
-                chart.data.datasets[0].data = [months, days, hours, minutes, seconds];
-                chart.update();
-            }
-        }
-
-        setInterval(updateCountdown, 1000);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
