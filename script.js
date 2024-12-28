@@ -5,7 +5,7 @@ const targetDate = new Date('March 16, 2025 00:00:00').getTime();
 
 // Инициализация настроек для Gauge.js
 const gaugeOptions = {
-    angle: 0, // Начальный угол
+    angle: 0, // Начальный угол (0 = 3 o'clock)
     lineWidth: 0.3, // Толщина линии
     radiusScale: 1, // Масштаб радиуса
     pointer: {
@@ -39,7 +39,12 @@ function createGaugeElement(elementId, maxValue) {
     opts.maxValue = maxValue;
     opts.staticLabels.labels = generateStaticLabels(maxValue);
     const target = document.getElementById(elementId);
-    return new Gauge(target).setOptions(opts);
+    const gauge = new Gauge(target).setOptions(opts);
+    gauge.maxValue = maxValue;
+    gauge.setMinValue(0);  // Минимальное значение
+    gauge.animationSpeed = 32; // Скорость анимации
+    gauge.set(0); // Установка начального значения
+    return gauge;
 }
 
 // Функция для генерации меток в зависимости от максимального значения
@@ -54,15 +59,11 @@ function generateStaticLabels(max) {
 
 // Создание спидометров
 const gauges = {
-    months: createGaugeElement('monthsGauge', 60), // Максимум 60 месяцев
-    days: createGaugeElement('daysGauge', 365), // Максимум 365 дней
-    hours: createGaugeElement('hoursGauge', 24), // Максимум 24 часов
-    minutes: createGaugeElement('minutesGauge', 60), // Максимум 60 минут
-    seconds: createGaugeElement('secondsGauge', 60)  // Максимум 60 секунд
+    months: createGaugeElement('monthsGauge', 60),    // Максимум 60 месяцев
+    hours: createGaugeElement('hoursGauge', 24),      // Максимум 24 часов
+    minutes: createGaugeElement('minutesGauge', 60),  // Максимум 60 минут
+    seconds: createGaugeElement('secondsGauge', 60)   // Максимум 60 секунд
 };
-
-// Установка начальных значений
-Object.values(gauges).forEach(gauge => gauge.set(0));
 
 // Функция для вычисления оставшегося времени
 function getTimeRemaining() {
@@ -72,7 +73,6 @@ function getTimeRemaining() {
     if (distance < 0) {
         return {
             months: 0,
-            days: 0,
             hours: 0,
             minutes: 0,
             seconds: 0
@@ -84,14 +84,12 @@ function getTimeRemaining() {
     const totalHours = Math.floor(totalMinutes / 60);
     const totalDays = Math.floor(totalHours / 24);
     const months = Math.floor(totalDays / 30); // Приближенно
-    const days = totalDays % 30;
     const hours = totalHours % 24;
     const minutes = totalMinutes % 60;
     const seconds = totalSeconds % 60;
 
     return {
         months,
-        days,
         hours,
         minutes,
         seconds
@@ -102,11 +100,11 @@ function getTimeRemaining() {
 function updateGauges() {
     const time = getTimeRemaining();
 
-    gauges.months.set(time.months);
-    gauges.days.set(time.days);
-    gauges.hours.set(time.hours);
-    gauges.minutes.set(time.minutes);
-    gauges.seconds.set(time.seconds);
+    // Ограничиваем значения максимальным
+    gauges.months.set(Math.min(time.months, 60));
+    gauges.hours.set(Math.min(time.hours, 24));
+    gauges.minutes.set(Math.min(time.minutes, 60));
+    gauges.seconds.set(Math.min(time.seconds, 60));
 }
 
 // Инициализация и запуск таймера
