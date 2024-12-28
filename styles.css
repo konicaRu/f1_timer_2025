@@ -45,7 +45,7 @@ h2 {
 .gauge-container {
     position: relative;
     width: 200px;
-    height: 220px; /* Увеличено для размещения меток и значений */
+    height: 240px; /* Увеличено для размещения меток и значений */
 }
 
 .gauge-container canvas {
@@ -69,6 +69,7 @@ h2 {
     text-align: center;
     font-size: 1.2em;
     color: #f0f0f0;
+    font-weight: bold;
 }
 
 .gauge-label br {
@@ -78,7 +79,7 @@ h2 {
 @media (max-width: 768px) {
     .gauge-container {
         width: 150px;
-        height: 180px;
+        height: 200px;
     }
 
     .gauge-label {
