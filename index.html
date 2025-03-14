@@ -3,44 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Время до первой гонки Формула-1 сезона 2025 | Countdown to the First Race of the 2025 Formula-1 Season</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Подключение Gauge.js через CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gauge.js/1.3.7/gauge.min.js"></script>
+    <title>F1 Countdown</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Время до первой гонки Формула-1 сезона 2025</h1>
-        <h2>Countdown to the First Race of the 2025 Formula-1 Season</h2>
-        <div class="gauges">
-            <div class="gauge-container">
-                <canvas id="monthsGauge"></canvas>
-                <div class="gauge-label">Месяцев Months</div>
-                <div class="gauge-value" id="monthsValue">0</div>
-            </div>
-            <div class="gauge-container">
-                <canvas id="daysGauge"></canvas>
-                <div class="gauge-label">Дней Days</div>
-                <div class="gauge-value" id="daysValue">0</div>
-            </div>
-            <div class="gauge-container">
-                <canvas id="hoursGauge"></canvas>
-                <div class="gauge-label">Часов Hours</div>
-                <div class="gauge-value" id="hoursValue">0</div>
-            </div>
-            <div class="gauge-container">
-                <canvas id="minutesGauge"></canvas>
-                <div class="gauge-label">Минут Minutes</div>
-                <div class="gauge-value" id="minutesValue">0</div>
-            </div>
-            <div class="gauge-container">
-                <canvas id="secondsGauge"></canvas>
-                <div class="gauge-label">Секунд Seconds</div>
-                <div class="gauge-value" id="secondsValue">0</div>
-            </div>
+        <h1 id="race-name">Загрузка...</h1>
+        <div class="speedometer">
+            <span id="days-left">--</span>
         </div>
+        <p id="race-info"></p>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
