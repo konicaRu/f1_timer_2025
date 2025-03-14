@@ -1,141 +1,42 @@
-// script.js
+const races = [
+    { date: "2025-03-16", name: "Гран При Австралии", location: "Мельбурн", track: "5278 м" },
+    { date: "2025-03-23", name: "Гран При Китая", location: "Шанхай", track: "5451 м" },
+    { date: "2025-04-06", name: "Гран При Японии", location: "Сузука", track: "5807 м" },
+    { date: "2025-04-13", name: "Гран При Бахрейна", location: "Сахир", track: "5412 м" },
+    { date: "2025-04-20", name: "Гран При Саудовской Аравии", location: "Джидда", track: "6174 м" },
+    { date: "2025-05-04", name: "Гран При США", location: "Майами", track: "5412 м" },
+    { date: "2025-05-18", name: "Гран При Эмилия-Романьи", location: "Имола", track: "4909 м" },
+    { date: "2025-05-25", name: "Гран При Монако", location: "Монако", track: "3337 м" },
+    { date: "2025-06-01", name: "Гран При Испании", location: "Барселона", track: "4657 м" },
+    { date: "2025-06-15", name: "Гран При Канады", location: "Монреаль", track: "4361 м" },
+    { date: "2025-06-29", name: "Гран При Австрии", location: "Шпильберг", track: "4318 м" },
+    { date: "2025-07-06", name: "Гран При Великобритании", location: "Сильверстоун", track: "5891 м" },
+    { date: "2025-07-27", name: "Гран При Бельгии", location: "Спа", track: "7004 м" },
+    { date: "2025-08-03", name: "Гран При Венгрии", location: "Хунгароринг", track: "4381 м" },
+    { date: "2025-08-31", name: "Гран При Нидерландов", location: "Зандфорт", track: "4259 м" },
+    { date: "2025-09-07", name: "Гран При Италии", location: "Монца", track: "5793 м" },
+    { date: "2025-09-21", name: "Гран При Азербайджана", location: "Баку", track: "6003 м" },
+    { date: "2025-10-05", name: "Гран При Сингапура", location: "Марина-Бэй", track: "4940 м" },
+    { date: "2025-10-19", name: "Гран При США", location: "Остин", track: "5513 м" },
+    { date: "2025-10-26", name: "Гран При Мексики", location: "Мехико", track: "4304 м" },
+    { date: "2025-11-09", name: "Гран При Бразилии", location: "Сан-Паулу", track: "4309 м" },
+    { date: "2025-11-22", name: "Гран При Лас-Вегаса", location: "Лас-Вегас", track: "6201 м" },
+    { date: "2025-11-30", name: "Гран При Катара", location: "Лосаил", track: "5419 м" },
+    { date: "2025-12-07", name: "Гран При Абу-Даби", location: "Яс-Марина", track: "5281 м" }
+];
 
-// Целевая дата: 16 марта 2025 года
-const targetDate = new Date('March 16, 2025 00:00:00').getTime();
-
-// Инициализация настроек для Gauge.js
-const gaugeOptions = {
-    angle: 0, // Начальный угол (0 = 3 o'clock)
-    lineWidth: 0.3, // Толщина линии
-    radiusScale: 1, // Масштаб радиуса
-    pointer: {
-        length: 0.6, // Длина стрелки
-        strokeWidth: 0.035, // Толщина стрелки
-        color: '#ff6f61' // Цвет стрелки
-    },
-    limitMax: false,     // Не ограничивать максимальное значение
-    limitMin: false,     // Не ограничивать минимальное значение
-    colorStart: '#ff6f61',   // Начальный цвет градиента
-    colorStop: '#ff6f61',    // Конечный цвет градиента
-    strokeColor: '#dddddd',  // Цвет границы
-    generateGradient: true,
-    highDpiSupport: true,     // Поддержка высоких DPI
-    staticLabels: {
-        font: "12px sans-serif",  // Увеличен шрифт меток
-        labels: [0, 10, 20, 30, 40, 50, 60],  // Метки (будут обновлены динамически)
-        color: "#ffffff",  // Цвет меток
-        fractionDigits: 0
-    },
-    staticZones: [
-        {strokeStyle: "#30B32D", min: 0, max: 50}, // Зеленый
-        {strokeStyle: "#FFDD00", min: 50, max: 80}, // Желтый
-        {strokeStyle: "#F03E3E", min: 80, max: 100}  // Красный
-    ]
-};
-
-// Функция для создания спидометра с корректными настройками
-function createGaugeElement(elementId, maxValue) {
-    const opts = Object.assign({}, gaugeOptions);
-    opts.maxValue = maxValue;
-    // Обновляем метки на основе maxValue
-    opts.staticLabels.labels = generateStaticLabels(maxValue);
-    // Обновляем зоны цвета на основе maxValue
-    opts.staticZones = generateStaticZones(maxValue);
-
-    const target = document.getElementById(elementId);
-    const gauge = new Gauge(target).setOptions(opts);
-    gauge.maxValue = maxValue;
-    gauge.setMinValue(0);  // Минимальное значение
-    gauge.animationSpeed = 32; // Скорость анимации
-    gauge.set(0); // Установка начального значения
-    return gauge;
-}
-
-// Функция для генерации меток в зависимости от максимального значения
-function generateStaticLabels(max) {
-    const step = Math.ceil(max / 5);
-    const labels = [];
-    for (let i = 0; i <= max; i += step) {
-        labels.push(i);
+function getNextRace() {
+    const today = new Date();
+    for (let race of races) {
+        let raceDate = new Date(race.date);
+        if (raceDate >= today) {
+            let daysLeft = Math.ceil((raceDate - today) / (1000 * 60 * 60 * 24));
+            document.getElementById("race-name").textContent = race.name;
+            document.getElementById("days-left").textContent = daysLeft;
+            document.getElementById("race-info").textContent = `📍 Место: ${race.location}, 🏁 Длина трассы: ${race.track}`;
+            return;
+        }
     }
-    return labels;
 }
 
-// Функция для генерации staticZones на основе maxValue
-function generateStaticZones(max) {
-    const zones = [];
-    if (max <= 0) return zones;
-    // Зеленый: 0 - 50% от max
-    zones.push({strokeStyle: "#30B32D", min: 0, max: max * 0.5});
-    // Желтый: 50% - 80% от max
-    zones.push({strokeStyle: "#FFDD00", min: max * 0.5, max: max * 0.8});
-    // Красный: 80% - max
-    zones.push({strokeStyle: "#F03E3E", min: max * 0.8, max: max});
-    return zones;
-}
-
-// Создание спидометров с корректными максимальными значениями
-const gauges = {
-    months: createGaugeElement('monthsGauge', 12),    // Максимум 12 месяцев
-    days: createGaugeElement('daysGauge', 31),        // Максимум 31 день
-    hours: createGaugeElement('hoursGauge', 24),      // Максимум 24 часа
-    minutes: createGaugeElement('minutesGauge', 60),  // Максимум 60 минут
-    seconds: createGaugeElement('secondsGauge', 60)   // Максимум 60 секунд
-};
-
-// Функция для вычисления оставшегося времени
-function getTimeRemaining() {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
-
-    if (distance < 0) {
-        return {
-            months: 0,
-            days: 0,
-            hours: 0,
-            minutes: 0,
-            seconds: 0
-        };
-    }
-
-    const totalSeconds = Math.floor(distance / 1000);
-    const totalMinutes = Math.floor(totalSeconds / 60);
-    const totalHours = Math.floor(totalMinutes / 60);
-    const totalDays = Math.floor(totalHours / 24);
-    const months = Math.floor(totalDays / 30); // Приближенно
-    const days = totalDays % 30;
-    const hours = totalHours % 24;
-    const minutes = totalMinutes % 60;
-    const seconds = totalSeconds % 60;
-
-    return {
-        months,
-        days,
-        hours,
-        minutes,
-        seconds
-    };
-}
-
-// Обновление спидометров и значений
-function updateGauges() {
-    const time = getTimeRemaining();
-
-    // Ограничиваем значения максимальным
-    gauges.months.set(Math.min(time.months, 12));
-    gauges.days.set(Math.min(time.days, 31));
-    gauges.hours.set(Math.min(time.hours, 24));
-    gauges.minutes.set(Math.min(time.minutes, 60));
-    gauges.seconds.set(Math.min(time.seconds, 60));
-
-    // Обновляем текстовые значения
-    document.getElementById('monthsValue').innerText = time.months;
-    document.getElementById('daysValue').innerText = time.days;
-    document.getElementById('hoursValue').innerText = time.hours;
-    document.getElementById('minutesValue').innerText = time.minutes;
-    document.getElementById('secondsValue').innerText = time.seconds;
-}
-
-// Инициализация и запуск таймера
-updateGauges();
-setInterval(updateGauges, 1000);
+getNextRace();
